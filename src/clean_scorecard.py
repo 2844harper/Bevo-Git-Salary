@@ -31,3 +31,15 @@ RENAME = {
 def load_raw():
     """Read the raw Scorecard CSV with ID and ZIP kept as strings."""
     return pd.read_csv(RAW_PATH, dtype={"id": str, "school.zip": str})
+
+
+def clean(df):
+    """Rename columns, build a 5-digit ZIP and a readable school type."""
+    df = df.rename(columns=RENAME)
+    df["zip5"] = df["zip"].str[:5].str.zfill(5)
+    df["control"] = df["ownership"].map(OWNERSHIP_LABELS)
+    return df.drop(columns="zip")
+
+
+if __name__ == "__main__":
+    print(clean(load_raw()).shape)
