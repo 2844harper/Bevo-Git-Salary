@@ -6,6 +6,8 @@ RAW_PATH = Path("data/raw/scorecard_raw.csv")
 BACHELORS = 3
 MIN_ENROLLMENT = 1000
 CLEAN_PATH = Path("data/processed/scorecard.csv")
+TARGETS_PATH = Path("data/processed/school_targets.csv")
+TARGET_COLUMNS = ["unitid", "name", "city", "state", "zip5", "control", "lat", "lon"]
 OWNERSHIP_LABELS = {1: "public", 2: "private_nonprofit", 3: "private_forprofit"}
 RENAME = {
     "id": "unitid",
@@ -55,9 +57,15 @@ def filter_sample(df):
     return df[keep]
 
 
+def save_targets(sample):
+    """Save school IDs and locations used to join other data sources."""
+    sample[TARGET_COLUMNS].to_csv(TARGETS_PATH, index=False)
+
+
 if __name__ == "__main__":
     sample = filter_sample(clean(load_raw()))
     CLEAN_PATH.parent.mkdir(parents=True, exist_ok=True)
     sample.to_csv(CLEAN_PATH, index=False)
+    save_targets(sample)
     print(len(sample), "schools kept")
     print(sample["control"].value_counts())
