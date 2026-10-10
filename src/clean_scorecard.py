@@ -3,6 +3,9 @@ from pathlib import Path
 import pandas as pd
 
 RAW_PATH = Path("data/raw/scorecard_raw.csv")
+BACHELORS = 3
+MIN_ENROLLMENT = 1000
+CLEAN_PATH = Path("data/processed/scorecard.csv")
 OWNERSHIP_LABELS = {1: "public", 2: "private_nonprofit", 3: "private_forprofit"}
 RENAME = {
     "id": "unitid",
@@ -41,5 +44,20 @@ def clean(df):
     return df.drop(columns="zip")
 
 
+def filter_sample(df):
+    """Keep bachelor's-focused, non-profit schools with enough students and earnings data."""
+    keep = (
+        (df["predominant_degree"] == BACHELORS)
+        & df["ownership"].isin([1, 2])
+        & (df["enrollment"] >= MIN_ENROLLMENT)
+        & df["earnings_10yr"].notna()
+    )
+    return df[keep]
+
+
 if __name__ == "__main__":
-    print(clean(load_raw()).shape)
+    sample = filter_sample(clean(load_raw()))
+    CLEAN_PATH.parent.mkdir(parents=True, exist_ok=True)
+    sample.to_csv(CLEAN_PATH, index=False)
+    print(len(sample), "schools kept")
+    print(sample["control"].value_counts())
