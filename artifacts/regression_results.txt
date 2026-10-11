@@ -1,0 +1,43 @@
+PART D REGRESSION RESULTS
+============================================================
+
+(1) earnings_10yr ~ coa_published  [main spec]
+N = 1151, R-squared = 0.3423
+------------------------------------------------------------
+Intercept                                       40797.3025 ( 851.3273)***
+coa_published                                       0.4116 (   0.0200)***
+(HC1 robust SE in parentheses; * p<0.1, ** p<0.05, *** p<0.01)
+
+(2) earnings_10yr ~ coa_published * control  [public vs private]
+N = 1151, R-squared = 0.4850
+------------------------------------------------------------
+Intercept                                       21958.5510 (1688.6900)***
+control[T.public]                                5488.2778 (2829.3369)*
+coa_published                                       0.6828 (   0.0312)***
+coa_published:control[T.public]                     0.4042 (   0.0936)***
+(HC1 robust SE in parentheses; * p<0.1, ** p<0.05, *** p<0.01)
+
+(3) earnings_10yr_rpp_adj ~ coa_published * control  [RPP robustness]
+N = 903, R-squared = 0.3784
+------------------------------------------------------------
+Intercept                                       28909.9095 (2084.6144)***
+control[T.public]                                7934.0354 (2916.5359)***
+coa_published                                       0.5758 (   0.0377)***
+coa_published:control[T.public]                     0.2443 (   0.0891)***
+(HC1 robust SE in parentheses; * p<0.1, ** p<0.05, *** p<0.01)
+
+(4) earnings_10yr ~ county income + GDP growth  [local economy]
+N = 1101, R-squared = 0.0971
+------------------------------------------------------------
+Intercept                                       46356.1359 (1574.6174)***
+income_2024                                         0.1745 (   0.0232)***
+GDP_growth_10y_CAGR                                91.6138 ( 266.8291)
+(HC1 robust SE in parentheses; * p<0.1, ** p<0.05, *** p<0.01)
+
+(5) coa_published ~ county income + GDP growth  [local economy]
+N = 1090, R-squared = 0.0616
+------------------------------------------------------------
+Intercept                                       29156.5589 (2375.0145)***
+income_2024                                         0.2137 (   0.0357)***
+GDP_growth_10y_CAGR                              -395.2289 ( 413.2672)
+(HC1 robust SE in parentheses; * p<0.1, ** p<0.05, *** p<0.01)
