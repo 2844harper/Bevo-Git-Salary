@@ -158,17 +158,39 @@ Run with `venv/bin/python src/analysis.py`. Joins the Part B table (`college_rpp
 
 # Visualization and findings
 
-**Cost vs. earnings** (`fig_cost_vs_earnings.png`): a clear upward cloud — pricier schools do show higher median earnings. Public schools cluster lower-left with a *steeper* fit line; privates spread across the expensive right tail.
+## Cost vs. earnings
 
-**Efficiency distribution** (`fig_efficiency_by_control.png`): two almost non-overlapping humps — privates center near 1.0 (a dollar of cost ≈ a dollar of yearly earnings), publics near 2.0.
+![Cost of attendance vs. median earnings](artifacts/figures/fig_cost_vs_earnings.png)
 
-**Payback boxplot** (`fig_payback_by_control.png`): median 1.9 years (public) vs 3.8 years (private) to cover the 4-year sticker cost.
+A clear upward cloud — pricier schools do show higher median earnings. Public schools cluster lower-left with a *steeper* fit line; privates spread across the expensive right tail.
 
-**County income vs. earnings** (`fig_county_income_vs_earnings.png`): upward slope — schools in higher-income counties produce higher-earning graduates (partly a "rich places are expensive places" effect).
+## Efficiency distribution
 
-**GDP growth vs. earnings** (`fig_gdp_growth_vs_earnings.png`): a flat cloud — a fast-growing local economy does not translate into higher graduate earnings.
+![Efficiency by control](artifacts/figures/fig_efficiency_by_control.png)
 
-**Regression results** (`artifacts/regression_results.txt`):
+Two almost non-overlapping humps — privates center near 1.0 (a dollar of cost ≈ a dollar of yearly earnings), publics near 2.0.
+
+## Payback period
+
+![Payback by control](artifacts/figures/fig_payback_by_control.png)
+
+Median 1.9 years (public) vs 3.8 years (private) to cover the 4-year sticker cost.
+
+## County income vs. earnings
+
+![County income vs. earnings](artifacts/figures/fig_county_income_vs_earnings.png)
+
+Upward slope — schools in higher-income counties produce higher-earning graduates (partly a "rich places are expensive places" effect).
+
+## GDP growth vs. earnings
+
+![GDP growth vs. earnings](artifacts/figures/fig_gdp_growth_vs_earnings.png)
+
+A flat cloud — a fast-growing local economy does not translate into higher graduate earnings.
+
+## Regression results
+
+Full tables: `artifacts/regression_results.txt`.
 
 - (1) Main: earnings_10yr = 40,797 + **0.41** × coa_published (R² = 0.34, N = 1,151). Each $1 of annual COA ↔ ~$0.41 higher median yearly earnings 10 years after entry.
 - (2) Public vs private: private slope 0.68; public slope 0.68 + **0.40** = 1.08 (interaction p < 0.01, R² = 0.49).
