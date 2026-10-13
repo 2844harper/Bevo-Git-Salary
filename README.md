@@ -51,26 +51,30 @@ We ask whether colleges that cost more (tuition plus local living costs) deliver
 
 ## Column dictionary (`data/processed/scorecard.csv`)
 
-| Column | Meaning | Unit |
-| --- | --- | --- |
-| `unitid` | Scorecard/IPEDS school ID (join key) | string |
-| `name`, `city`, `state` | School name and location | text, 2-letter state |
-| `zip5` | 5-digit ZIP built from `school.zip` | string |
-| `control` | `public` or `private_nonprofit` (for-profit excluded) | category |
-| `ownership` | Ownership code: 1 public, 2 private non-profit, 3 private for-profit | code |
-| `predominant_degree` | Predominant degree awarded; 3 = bachelor's | code |
-| `lat`, `lon` | School location | degrees |
-| `enrollment` | Undergraduate enrollment | students |
-| `admission_rate` | Share of applicants admitted | 0–1 |
-| `completion_rate` | Completion rate within 150% of normal time (4-year schools) | 0–1 |
-| `median_debt` | Median federal loan principal of students who left the school | USD |
-| `pell_rate` | Share of undergraduates receiving Pell grants | 0–1 |
-| `tuition_in_state` | Published in-state tuition and fees | USD per year |
-| `tuition_out_of_state` | Published out-of-state tuition and fees | USD per year |
-| `net_price` | Average net price after grant aid | USD per year |
-| `coa_published` | Published cost of attendance (tuition, fees, books, living) | USD per year |
-| `earnings_6yr` | Median earnings of working, not-enrolled students 6 years after entry | USD per year |
-| `earnings_10yr` | Same measure, 10 years after entry (main outcome) | USD per year |
+| Column | Meaning | Unit | Data year |
+| --- | --- | --- | --- |
+| `unitid` | Scorecard/IPEDS school ID (join key) | string | 2025–26 |
+| `name`, `city`, `state` | School name and location | text | 2025–26 |
+| `zip5` | 5-digit ZIP built from `school.zip` | string | 2025–26 |
+| `control` | `public` or `private_nonprofit` (for-profit excluded) | category | 2025–26 |
+| `ownership` | Ownership code: 1 public, 2 private non-profit, 3 private for-profit | code | 2025–26 |
+| `predominant_degree` | Predominant degree awarded; 3 = bachelor's | code | 2024-25 |
+| `lat`, `lon` | School location | degrees | 2025-26 |
+| `enrollment` | Undergraduate enrollment | students | 2024 |
+| `admission_rate` | Share of applicants admitted | 0–1 | 2024 |
+| `completion_rate` | Completion rate within 150% of normal time (4-year schools) | 0–1 | 2018 |
+| `median_debt` | Median federal loan principal of students who left the school | USD | 2020–21 |
+| `pell_rate` | Share of undergraduates receiving Pell grants | 0–1 | 2023–24 |
+| `tuition_in_state` | Published in-state tuition and fees | USD per year | 2024–25 |
+| `tuition_out_of_state` | Published out-of-state tuition and fees | USD per year | 2024–25 |
+| `net_price` | Average net price after grant aid | USD per year | 2023–24 |
+| `coa_published` | Published cost of attendance (tuition, fees, books, living) | USD per year | 2023–24 |
+| `earnings_6yr` | Median earnings of working, not-enrolled students 6 years after entry | USD per year (2022 dollars) | 2020-21 (Entered AY2013–14 and AY2014–15) |
+| `earnings_10yr` | Same measure, 10 years after entry (main outcome) | USD per year (2022 dollars) | 2020-21 (Entered AY2009–10 and 2010–11) |
+
+### Data retrieval
+
+Retrieved on 2026-10-10 from the College Scorecard API using the `latest.` fields, which return the most recent release available at that time. Rerunning later may give different values. Source: [College Scorecard data](https://collegescorecard.ed.gov/data/), [API documentation](https://collegescorecard.ed.gov/data/api-documentation/).
 
 # Part B — Cost of living (Linda Wu)
 
@@ -232,6 +236,9 @@ Full tables: `artifacts/regression_results.txt`.
 7. FY2024 HUD rents are benchmarks, not rents students or graduates actually pay.
 8. One snapshot in time and cross-sectional: associations, not causal proof. (Richer students select into pricier schools.)
 9. The planned COA web-scraping validation was dropped by team decision — crawling ~30 school sites was too uncertain.
+10. Data years differ across variables. Costs are from 2023–25, while earnings are for students who entered school in 2009–15 and were measured in 2020–21 (a pandemic period). Current costs are therefore compared with earnings of much older cohorts, and because tuition has risen over time, the return on cost may be overstated.
+11. Earnings are reported in 2022 dollars, while costs are in nominal dollars of the year reported, so the two are not on the same price basis.
+12. Schools were selected by bachelor's focus, non-profit status, at least 1,000 students and available 10-year earnings. For-profit, very small and non-reporting schools are excluded, so results describe this sample only.
 
 # Further research
 
