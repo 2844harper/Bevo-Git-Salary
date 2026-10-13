@@ -49,6 +49,29 @@ We ask whether colleges that cost more (tuition plus local living costs) deliver
 
 **Processing logic:** Rename → build ZIP → label control → filter → save `data/processed/scorecard.csv` (the base table everything else builds on) plus the targets roster.
 
+## Column dictionary (`data/processed/scorecard.csv`)
+
+| Column | Meaning | Unit |
+| --- | --- | --- |
+| `unitid` | Scorecard/IPEDS school ID (join key) | string |
+| `name`, `city`, `state` | School name and location | text, 2-letter state |
+| `zip5` | 5-digit ZIP built from `school.zip` | string |
+| `control` | `public` or `private_nonprofit` (for-profit excluded) | category |
+| `ownership` | Ownership code: 1 public, 2 private non-profit, 3 private for-profit | code |
+| `predominant_degree` | Predominant degree awarded; 3 = bachelor's | code |
+| `lat`, `lon` | School location | degrees |
+| `enrollment` | Undergraduate enrollment | students |
+| `admission_rate` | Share of applicants admitted | 0–1 |
+| `completion_rate` | Completion rate within 150% of normal time (4-year schools) | 0–1 |
+| `median_debt` | Median federal loan principal of students who left the school | USD |
+| `pell_rate` | Share of undergraduates receiving Pell grants | 0–1 |
+| `tuition_in_state` | Published in-state tuition and fees | USD per year |
+| `tuition_out_of_state` | Published out-of-state tuition and fees | USD per year |
+| `net_price` | Average net price after grant aid | USD per year |
+| `coa_published` | Published cost of attendance (tuition, fees, books, living) | USD per year |
+| `earnings_6yr` | Median earnings of working, not-enrolled students 6 years after entry | USD per year |
+| `earnings_10yr` | Same measure, 10 years after entry (main outcome) | USD per year |
+
 # Part B — Cost of living (Linda Wu)
 
 A dollar buys different amounts in different places, so nominal earnings can't be compared directly. Part B attaches a local price level to every school and converts earnings into comparable ("real") dollars.
