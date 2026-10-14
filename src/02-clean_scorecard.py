@@ -2,11 +2,12 @@ from pathlib import Path
 
 import pandas as pd
 
-RAW_PATH = Path("data/raw/scorecard_raw.csv")
+ROOT = Path(__file__).resolve().parents[1]
+RAW_PATH = ROOT / "data/raw/scorecard_raw.csv"
 BACHELORS = 3
 MIN_ENROLLMENT = 1000
-CLEAN_PATH = Path("data/processed/scorecard.csv")
-TARGETS_PATH = Path("data/processed/school_targets.csv")
+CLEAN_PATH = ROOT / "data/processed/scorecard.csv"
+TARGETS_PATH = ROOT / "data/processed/school_targets.csv"
 TARGET_COLUMNS = ["unitid", "name", "city", "state", "zip5", "control", "lat", "lon"]
 OWNERSHIP_LABELS = {1: "public", 2: "private_nonprofit", 3: "private_forprofit"}
 RENAME = {

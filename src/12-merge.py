@@ -13,6 +13,7 @@ UNMATCHED_FILE = DATA / "unmatched_schools.csv"
 
 
 def merge_schools():
+    # Load school geography, RPP, and HUD rents, preserving IDs and codes as strings.
     schools = pd.read_csv(
         SCHOOLS_FILE,
         dtype={"unitid": str, "cbsa": str, "county_fips": str},
@@ -28,10 +29,12 @@ def merge_schools():
         dtype={"county_fips": str},
     )
 
+    # Check that school IDs and lookup-table keys are unique.
     assert schools["unitid"].is_unique
     assert rpp["cbsa"].is_unique
     assert hud["county_fips"].is_unique
 
+    # Attach local price indices by CBSA while retaining all schools.
     merged = schools.merge(
         rpp,
         on="cbsa",
@@ -39,6 +42,7 @@ def merge_schools():
         validate="many_to_one",
     )
 
+    # Attach one- and two-bedroom rents and HUD record counts by county FIPS.
     hud_columns = [
         "county_fips",
         "fmr_1br",
@@ -53,12 +57,14 @@ def merge_schools():
         validate="many_to_one",
     )
 
+    # Adjust earnings for local prices by dividing by RPP / 100.
     for column in ["earnings_6yr", "earnings_10yr"]:
         merged[column + "_rpp_adj"] = (
             pd.to_numeric(merged[column], errors="coerce")
             / (merged["rpp_2024"] / 100)
         )
 
+    # Flag missing CBSA, RPP, or two-bedroom rent and collect affected schools.
     merged["missing_cbsa"] = merged["cbsa"].isna()
     merged["missing_rpp"] = merged["rpp_2024"].isna()
     merged["missing_hud"] = merged["fmr_2br"].isna()
@@ -69,12 +75,15 @@ def merge_schools():
         ].any(axis=1)
     ].copy()
 
+    # Verify that the merges preserve school counts and unique IDs.
     assert len(merged) == len(schools)
     assert merged["unitid"].is_unique
 
+    # Save the full school table and a separate table of schools with missing matches.
     merged.to_csv(OUTPUT_FILE, index=False)
     unmatched.to_csv(UNMATCHED_FILE, index=False)
 
+    # Report match coverage and display sample merged records.
     print("Total schools:", len(merged))
     print("Schools with RPP:", merged["rpp_2024"].notna().sum())
     print("Schools with HUD rent:", merged["fmr_2br"].notna().sum())

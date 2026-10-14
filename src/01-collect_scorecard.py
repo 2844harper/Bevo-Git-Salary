@@ -7,6 +7,8 @@ from dotenv import load_dotenv
 
 API_URL = "https://api.data.gov/ed/collegescorecard/v1/schools"
 RAW_PATH = Path("data/raw/scorecard_raw.csv")
+
+# Select school information, costs, and earnings to download.
 FIELDS = [
     "id",
     "school.name",
@@ -32,7 +34,7 @@ FIELDS = [
 
 
 def fetch_page(api_key, page):
-    """Return one page of school records from the Scorecard API."""
+    """Request one page of up to 100 schools and check for API errors."""
     params = {
         "api_key": api_key,
         "fields": ",".join(FIELDS),
@@ -58,7 +60,9 @@ def collect_all(api_key):
 
 
 if __name__ == "__main__":
+    # Get a key at https://api.data.gov/signup/ and save it as SCORECARD_API_KEY in .env.
     load_dotenv()
     df = collect_all(os.environ["SCORECARD_API_KEY"])
+    # Save all downloaded records as a raw CSV, replacing the previous file.
     RAW_PATH.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(RAW_PATH, index=False)

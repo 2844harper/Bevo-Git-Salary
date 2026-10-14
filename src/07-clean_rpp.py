@@ -9,6 +9,7 @@ OUTPUT_FILE = ROOT / "data/processed/rpp_clean.csv"
 
 def clean_rpp():
 
+    # Load the BEA table and preserve geographic codes as strings.
     rpp = pd.read_excel(
         INPUT_FILE,
         sheet_name="Table",
@@ -19,12 +20,14 @@ def clean_rpp():
     print("Original rows:", len(rpp))
     print("Columns:", rpp.columns.tolist())
 
+    # Keep the all-items price index (LineCode 1).
     rpp["LineCode"] = pd.to_numeric(
         rpp["LineCode"], errors="coerce"
     )
 
     rpp = rpp[rpp["LineCode"] == 1].copy()
 
+    # Standardize five-digit codes and remove invalid or aggregate codes.
     rpp["GeoFIPS"] = rpp["GeoFIPS"].str.strip().str.zfill(5)
 
     rpp = rpp[
@@ -32,6 +35,7 @@ def clean_rpp():
         & ~rpp["GeoFIPS"].isin(["00000", "00999"])
     ].copy()
 
+    # Rename the geographic and 2024 price-index columns for later merges.
     rpp = rpp.rename(
         columns={
             "GeoFIPS": "cbsa",
@@ -40,6 +44,7 @@ def clean_rpp():
         }
     )
 
+    # Convert RPP to numeric values, keep the needed columns, and drop missing RPP.
     rpp["rpp_2024"] = pd.to_numeric(
         rpp["rpp_2024"], errors="coerce"
     )
@@ -48,6 +53,7 @@ def clean_rpp():
 
     rpp = rpp.dropna(subset=["rpp_2024"])
 
+    # Check that CBSA codes are unique and price indices are positive.
     assert not rpp["cbsa"].duplicated().any(), (
         "Duplicate CBSA identifiers found!"
     )
@@ -56,6 +62,7 @@ def clean_rpp():
         "RPP values must be positive!"
     )
 
+    # Save the cleaned CSV and report its size and a sample of rows.
     OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
     rpp.to_csv(OUTPUT_FILE, index=False)
 
