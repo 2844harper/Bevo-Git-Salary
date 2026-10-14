@@ -257,7 +257,7 @@ venv/bin/pip install -r requirements.txt
 venv/bin/python src/analysis.py
 ```
 
-Rebuilds `data/processed/college_metrics.csv`, `artifacts/regression_results.txt`, and `artifacts/figures/*.png` from the processed tables. Verified in a clean environment on 2026-10-11. All code is `black`-formatted (config in `pyproject.toml`); API keys live in `.env` (see `.env.example`) and are never committed.
+Rebuilds `data/processed/college_metrics.csv`, `artifacts/regression_results.txt`, and `artifacts/figures/*.png` from the processed tables. Verified in a clean environment on 2026-10-11. All code is `black`-formatted (config in `pyproject.toml`); API keys live in `.env` (see `RUN_GUIDE.md` for setup) and are never committed.
 
 # Team & files
 
