@@ -1,14 +1,15 @@
 from pathlib import Path
+
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 
-INPUT_FILE = ROOT / "data/raw/RPP.xlsx"
+INPUT_FILE = ROOT / "data/raw/2022 rpp.xlsx"
 OUTPUT_FILE = ROOT / "data/processed/rpp_clean.csv"
 
 
 def clean_rpp():
-
+    """Read INPUT_FILE and write cleaned 2022 CBSA price indices to OUTPUT_FILE."""
     rpp = pd.read_excel(
         INPUT_FILE,
         sheet_name="Table",
@@ -19,14 +20,14 @@ def clean_rpp():
     print("Original rows:", len(rpp))
     print("Columns:", rpp.columns.tolist())
 
-    rpp["LineCode"] = pd.to_numeric(
-        rpp["LineCode"], errors="coerce"
-    )
+    # Keep the all-items price index (LineCode 1).
+    rpp["LineCode"] = pd.to_numeric(rpp["LineCode"], errors="coerce")
 
     rpp = rpp[rpp["LineCode"] == 1].copy()
 
     rpp["GeoFIPS"] = rpp["GeoFIPS"].str.strip().str.zfill(5)
 
+    # Exclude national and aggregate codes rather than treating them as CBSAs.
     rpp = rpp[
         rpp["GeoFIPS"].str.fullmatch(r"\d{5}", na=False)
         & ~rpp["GeoFIPS"].isin(["00000", "00999"])
@@ -36,25 +37,19 @@ def clean_rpp():
         columns={
             "GeoFIPS": "cbsa",
             "GeoName": "metro_name",
-            "2024": "rpp_2024",
+            "2022": "rpp_2022",
         }
     )
 
-    rpp["rpp_2024"] = pd.to_numeric(
-        rpp["rpp_2024"], errors="coerce"
-    )
+    rpp["rpp_2022"] = pd.to_numeric(rpp["rpp_2022"], errors="coerce")
 
-    rpp = rpp[["cbsa", "metro_name", "rpp_2024"]]
+    rpp = rpp[["cbsa", "metro_name", "rpp_2022"]]
 
-    rpp = rpp.dropna(subset=["rpp_2024"])
+    rpp = rpp.dropna(subset=["rpp_2022"])
 
-    assert not rpp["cbsa"].duplicated().any(), (
-        "Duplicate CBSA identifiers found!"
-    )
+    assert not rpp["cbsa"].duplicated().any(), "Duplicate CBSA identifiers found!"
 
-    assert (rpp["rpp_2024"] > 0).all(), (
-        "RPP values must be positive!"
-    )
+    assert (rpp["rpp_2022"] > 0).all(), "RPP values must be positive!"
 
     OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
     rpp.to_csv(OUTPUT_FILE, index=False)

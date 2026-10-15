@@ -2,11 +2,12 @@ from pathlib import Path
 
 import pandas as pd
 
-RAW_PATH = Path("data/raw/scorecard_raw.csv")
+ROOT = Path(__file__).resolve().parents[1]
+RAW_PATH = ROOT / "data/raw/scorecard_raw.csv"
 BACHELORS = 3
 MIN_ENROLLMENT = 1000
-CLEAN_PATH = Path("data/processed/scorecard.csv")
-TARGETS_PATH = Path("data/processed/school_targets.csv")
+CLEAN_PATH = ROOT / "data/processed/scorecard.csv"
+TARGETS_PATH = ROOT / "data/processed/school_targets.csv"
 TARGET_COLUMNS = ["unitid", "name", "city", "state", "zip5", "control", "lat", "lon"]
 OWNERSHIP_LABELS = {1: "public", 2: "private_nonprofit", 3: "private_forprofit"}
 RENAME = {
@@ -34,12 +35,12 @@ RENAME = {
 
 
 def load_raw():
-    """Read the raw Scorecard CSV with ID and ZIP kept as strings."""
+    """Return raw CSV data with string IDs and ZIPs, preserving source years."""
     return pd.read_csv(RAW_PATH, dtype={"id": str, "school.zip": str})
 
 
 def clean(df):
-    """Rename columns, build a 5-digit ZIP and a readable school type."""
+    """Return input records with renamed columns, ZIP5, and school types."""
     df = df.rename(columns=RENAME)
     df["zip5"] = df["zip"].str[:5].str.zfill(5)
     df["control"] = df["ownership"].map(OWNERSHIP_LABELS)
@@ -47,7 +48,7 @@ def clean(df):
 
 
 def filter_sample(df):
-    """Keep bachelor's-focused, non-profit schools with enough students and earnings data."""
+    """Return bachelor's-focused nonprofits with 1,000+ students and earnings."""
     keep = (
         (df["predominant_degree"] == BACHELORS)
         & df["ownership"].isin([1, 2])
@@ -58,7 +59,7 @@ def filter_sample(df):
 
 
 def save_targets(sample):
-    """Save school IDs and locations used to join other data sources."""
+    """Write the sample's school IDs and locations to the targets CSV."""
     sample[TARGET_COLUMNS].to_csv(TARGETS_PATH, index=False)
 
 

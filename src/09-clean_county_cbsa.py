@@ -2,7 +2,6 @@ from pathlib import Path
 
 import pandas as pd
 
-
 ROOT = Path(__file__).resolve().parents[1]
 
 INPUT_FILE = ROOT / "data/raw/metropolitan.xlsx"
@@ -10,8 +9,7 @@ OUTPUT_FILE = ROOT / "data/processed/county_cbsa_clean.csv"
 
 
 def clean_county_cbsa():
-
-
+    """Read the 2020 county-CBSA workbook and write its cleaned mapping."""
     metro = pd.read_excel(
         INPUT_FILE,
         header=2,
@@ -30,22 +28,16 @@ def clean_county_cbsa():
         }
     )
 
-    metro = metro.dropna(
-        subset=["state_fips", "county_code", "cbsa"]
-    ).copy()
+    metro = metro.dropna(subset=["state_fips", "county_code", "cbsa"]).copy()
 
+    # Pad codes with leading zeros to their standard lengths.
     metro["state_fips"] = metro["state_fips"].str.zfill(2)
     metro["county_code"] = metro["county_code"].str.zfill(3)
     metro["cbsa"] = metro["cbsa"].str.zfill(5)
 
+    metro["county_fips"] = metro["state_fips"] + metro["county_code"]
 
-    metro["county_fips"] = (
-        metro["state_fips"] + metro["county_code"]
-    )
-
-    metro_clean = metro[
-        ["county_fips", "cbsa", "cbsa_name", "area_type"]
-    ].copy()
+    metro_clean = metro[["county_fips", "cbsa", "cbsa_name", "area_type"]].copy()
 
     metro_clean = metro_clean.drop_duplicates()
 

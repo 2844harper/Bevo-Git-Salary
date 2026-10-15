@@ -1,4 +1,5 @@
 from pathlib import Path
+
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -13,6 +14,7 @@ UNMATCHED_FILE = DATA / "unmatched_schools.csv"
 
 
 def merge_schools():
+    """Read school, RPP and HUD tables; save all schools and unmatched records."""
     schools = pd.read_csv(
         SCHOOLS_FILE,
         dtype={"unitid": str, "cbsa": str, "county_fips": str},
@@ -53,20 +55,19 @@ def merge_schools():
         validate="many_to_one",
     )
 
+    # Adjust 2022-dollar Scorecard earnings using 2022 RPP / 100.
+    # This adjusts for local prices, not inflation between years.
     for column in ["earnings_6yr", "earnings_10yr"]:
-        merged[column + "_rpp_adj"] = (
-            pd.to_numeric(merged[column], errors="coerce")
-            / (merged["rpp_2024"] / 100)
+        merged[column + "_rpp_adj"] = pd.to_numeric(merged[column], errors="coerce") / (
+            merged["rpp_2022"] / 100
         )
 
     merged["missing_cbsa"] = merged["cbsa"].isna()
-    merged["missing_rpp"] = merged["rpp_2024"].isna()
+    merged["missing_rpp"] = merged["rpp_2022"].isna()
     merged["missing_hud"] = merged["fmr_2br"].isna()
 
     unmatched = merged[
-        merged[
-            ["missing_cbsa", "missing_rpp", "missing_hud"]
-        ].any(axis=1)
+        merged[["missing_cbsa", "missing_rpp", "missing_hud"]].any(axis=1)
     ].copy()
 
     assert len(merged) == len(schools)
@@ -76,7 +77,7 @@ def merge_schools():
     unmatched.to_csv(UNMATCHED_FILE, index=False)
 
     print("Total schools:", len(merged))
-    print("Schools with RPP:", merged["rpp_2024"].notna().sum())
+    print("Schools with RPP:", merged["rpp_2022"].notna().sum())
     print("Schools with HUD rent:", merged["fmr_2br"].notna().sum())
     print("Schools missing CBSA:", merged["missing_cbsa"].sum())
     print("Schools missing RPP:", merged["missing_rpp"].sum())
@@ -90,11 +91,13 @@ def merge_schools():
             [
                 "name",
                 "earnings_10yr",
-                "rpp_2024",
+                "rpp_2022",
                 "fmr_2br",
                 "earnings_10yr_rpp_adj",
             ]
-        ].head().to_string(index=False)
+        ]
+        .head()
+        .to_string(index=False)
     )
 
     print("\nSaved:", OUTPUT_FILE)
