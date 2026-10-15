@@ -1,4 +1,5 @@
 from pathlib import Path
+
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -9,8 +10,7 @@ OUTPUT_FILE = ROOT / "data/processed/college_rpp_adjusted.csv"
 
 
 def merge_college_rpp():
-
-    # Load school geography and RPP data, preserving geographic codes as strings.
+    """Read school and RPP tables and save schools with adjusted earnings."""
     schools = pd.read_csv(
         SCHOOLS_FILE,
         dtype={"cbsa": str, "county_fips": str, "zip5": str},
@@ -21,11 +21,9 @@ def merge_college_rpp():
         dtype={"cbsa": str},
     )
 
-    # Standardize CBSA codes to five digits before matching.
     schools["cbsa"] = schools["cbsa"].str.zfill(5)
     rpp["cbsa"] = rpp["cbsa"].str.zfill(5)
 
-    # Match each school to its area's RPP while retaining all schools.
     merged = schools.merge(
         rpp,
         on="cbsa",
@@ -33,22 +31,19 @@ def merge_college_rpp():
         validate="many_to_one",
     )
 
-    # Check that the merge preserves the original number of schools.
-    assert len(merged) == len(schools), (
-        "Merge unexpectedly changed the number of colleges!"
-    )
+    assert len(merged) == len(
+        schools
+    ), "Merge unexpectedly changed the number of colleges!"
 
-    # Adjust earnings for local prices by dividing by RPP / 100.
+    # Adjust 2022-dollar Scorecard earnings using 2022 RPP / 100.
+    # This adjusts for local prices, not inflation between years.
     for column in ["earnings_6yr", "earnings_10yr"]:
-        merged[column + "_rpp_adj"] = (
-            merged[column] / (merged["rpp_2024"] / 100)
-        )
+        merged[column + "_rpp_adj"] = merged[column] / (merged["rpp_2022"] / 100)
 
-    # Report RPP match counts and display sample adjusted earnings.
     print("Original colleges:", len(schools))
     print("Merged colleges:", len(merged))
-    print("Colleges with RPP:", merged["rpp_2024"].notna().sum())
-    print("Colleges without RPP:", merged["rpp_2024"].isna().sum())
+    print("Colleges with RPP:", merged["rpp_2022"].notna().sum())
+    print("Colleges without RPP:", merged["rpp_2022"].isna().sum())
 
     print("\nFirst five colleges:")
     print(
@@ -56,13 +51,12 @@ def merge_college_rpp():
             [
                 "name",
                 "earnings_10yr",
-                "rpp_2024",
+                "rpp_2022",
                 "earnings_10yr_rpp_adj",
             ]
         ].head()
     )
 
-    # Save the merged table for the final analysis.
     OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
     merged.to_csv(OUTPUT_FILE, index=False)
 

@@ -1,43 +1,67 @@
-PART D REGRESSION RESULTS
-============================================================
+PART D REGRESSION RESULTS - OBSERVED 2022 COUNTY LEVELS AND RPP
+========================================================================
+All five specifications include observed 2022 county per-capita income,
+log observed 2022 county real GDP, and unchanged 2014-2024 GDP CAGR.
+GDP is measured in thousands of chained 2017 USD; income is nominal USD.
+Model 2 is the main public/private specification; model 3 uses 2022 RPP.
+Scorecard earnings and COA retain their original observed reporting years.
+The 2014-2024 CAGR is retrospective and includes years after 2022.
+HC1 standard errors are not clustered by county; associations are not causal.
+Model 3 may have a smaller estimation sample because of missing RPP.
 
-(1) earnings_10yr ~ coa_published  [main spec]
-N = 1151, R-squared = 0.3423
-------------------------------------------------------------
-Intercept                                       40797.3025 ( 851.3273)***
-coa_published                                       0.4116 (   0.0200)***
-(HC1 robust SE in parentheses; * p<0.1, ** p<0.05, *** p<0.01)
+(1) college COA -> earnings | 2022 county controls [benchmark]
+Formula: earnings_10yr ~ coa_published + income_2022 + log_gdp_2022 + GDP_growth_10y_CAGR
+N = 1090, R-squared = 0.3735, Adj. R-squared = 0.3711
+------------------------------------------------------------------------
+Intercept                                       16183.1485 (3088.6650)***  p=1.61e-07
+coa_published                                       0.3406 (   0.0199)***  p=1.126e-65
+income_2022                                         0.0539 (   0.0248)**  p=0.02981
+log_gdp_2022                                     1466.1868 ( 234.2675)***  p=3.884e-10
+GDP_growth_10y_CAGR                               -90.2402 ( 234.3336)  p=0.7002
+(HC1 robust SE; * p<0.1, ** p<0.05, *** p<0.01)
 
-(2) earnings_10yr ~ coa_published * control  [public vs private]
-N = 1151, R-squared = 0.4850
-------------------------------------------------------------
-Intercept                                       21958.5510 (1688.6900)***
-control[T.public]                                5488.2778 (2829.3369)*
-coa_published                                       0.6828 (   0.0312)***
-coa_published:control[T.public]                     0.4042 (   0.0936)***
-(HC1 robust SE in parentheses; * p<0.1, ** p<0.05, *** p<0.01)
+(2) public/private interaction | 2022 county controls [main]
+Formula: earnings_10yr ~ coa_published * control + income_2022 + log_gdp_2022 + GDP_growth_10y_CAGR
+N = 1090, R-squared = 0.4857, Adj. R-squared = 0.4828
+------------------------------------------------------------------------
+Intercept                                        -691.7722 (3325.0201)  p=0.8352
+control[T.public]                                7012.5186 (2760.3881)**  p=0.01107
+coa_published                                       0.6051 (   0.0341)***  p=2.097e-70
+coa_published:control[T.public]                     0.2915 (   0.0894)***  p=0.001111
+income_2022                                         0.0439 (   0.0240)*  p=0.0671
+log_gdp_2022                                     1436.0703 ( 215.7263)***  p=2.796e-11
+GDP_growth_10y_CAGR                               -94.4435 ( 228.3517)  p=0.6792
+(HC1 robust SE; * p<0.1, ** p<0.05, *** p<0.01)
 
-(3) earnings_10yr_rpp_adj ~ coa_published * control  [RPP robustness]
-N = 903, R-squared = 0.3784
-------------------------------------------------------------
-Intercept                                       28909.9095 (2084.6144)***
-control[T.public]                                7934.0354 (2916.5359)***
-coa_published                                       0.5758 (   0.0377)***
-coa_published:control[T.public]                     0.2443 (   0.0891)***
-(HC1 robust SE in parentheses; * p<0.1, ** p<0.05, *** p<0.01)
+(3) 2022-RPP-adjusted earnings | 2022 county controls [robustness]
+Formula: earnings_10yr_rpp_adj ~ coa_published * control + income_2022 + log_gdp_2022 + GDP_growth_10y_CAGR
+N = 889, R-squared = 0.3703, Adj. R-squared = 0.3660
+------------------------------------------------------------------------
+Intercept                                       34780.3794 (4410.5920)***  p=3.129e-15
+control[T.public]                                8594.3633 (2954.6244)***  p=0.003628
+coa_published                                       0.5721 (   0.0381)***  p=5.436e-51
+coa_published:control[T.public]                     0.2024 (   0.0904)**  p=0.02512
+income_2022                                        -0.0205 (   0.0221)  p=0.3533
+log_gdp_2022                                     -184.1370 ( 271.1327)  p=0.497
+GDP_growth_10y_CAGR                              -474.4864 ( 276.5477)*  p=0.08621
+(HC1 robust SE; * p<0.1, ** p<0.05, *** p<0.01)
 
-(4) earnings_10yr ~ county income + GDP growth  [local economy]
-N = 1101, R-squared = 0.0971
-------------------------------------------------------------
-Intercept                                       46356.1359 (1574.6174)***
-income_2024                                         0.1745 (   0.0232)***
-GDP_growth_10y_CAGR                                91.6138 ( 266.8291)
-(HC1 robust SE in parentheses; * p<0.1, ** p<0.05, *** p<0.01)
+(4) earnings on observed 2022 county economy
+Formula: earnings_10yr ~ income_2022 + log_gdp_2022 + GDP_growth_10y_CAGR
+N = 1101, R-squared = 0.1459, Adj. R-squared = 0.1436
+------------------------------------------------------------------------
+Intercept                                       14669.4371 (3713.9711)***  p=7.822e-05
+income_2022                                         0.0950 (   0.0284)***  p=0.0008122
+log_gdp_2022                                     2320.8099 ( 276.7607)***  p=5.046e-17
+GDP_growth_10y_CAGR                              -364.9442 ( 263.7934)  p=0.1665
+(HC1 robust SE; * p<0.1, ** p<0.05, *** p<0.01)
 
-(5) coa_published ~ county income + GDP growth  [local economy]
-N = 1090, R-squared = 0.0616
-------------------------------------------------------------
-Intercept                                       29156.5589 (2375.0145)***
-income_2024                                         0.2137 (   0.0357)***
-GDP_growth_10y_CAGR                              -395.2289 ( 413.2672)
-(HC1 robust SE in parentheses; * p<0.1, ** p<0.05, *** p<0.01)
+(5) college COA on observed 2022 county economy
+Formula: coa_published ~ income_2022 + log_gdp_2022 + GDP_growth_10y_CAGR
+N = 1090, R-squared = 0.0862, Adj. R-squared = 0.0837
+------------------------------------------------------------------------
+Intercept                                       -3859.8944 (6228.9923)  p=0.5355
+income_2022                                         0.1315 (   0.0460)***  p=0.004262
+log_gdp_2022                                     2426.9453 ( 461.8888)***  p=1.485e-07
+GDP_growth_10y_CAGR                              -858.2203 ( 406.5476)**  p=0.03477
+(HC1 robust SE; * p<0.1, ** p<0.05, *** p<0.01)

@@ -8,7 +8,8 @@ from dotenv import load_dotenv
 API_URL = "https://api.data.gov/ed/collegescorecard/v1/schools"
 RAW_PATH = Path("data/raw/scorecard_raw.csv")
 
-# Select school information, costs, and earnings to download.
+# In the current dataset, earnings are 2020-2021 observations in 2022 dollars.
+# Other latest.* fields have their own reporting years.
 FIELDS = [
     "id",
     "school.name",
@@ -34,7 +35,7 @@ FIELDS = [
 
 
 def fetch_page(api_key, page):
-    """Request one page of up to 100 schools and check for API errors."""
+    """Return a JSON response for an API key and zero-based page number."""
     params = {
         "api_key": api_key,
         "fields": ",".join(FIELDS),
@@ -47,7 +48,7 @@ def fetch_page(api_key, page):
 
 
 def collect_all(api_key):
-    """Download all pages and return them as one DataFrame."""
+    """Use an API key to download all schools into one DataFrame."""
     records, page = [], 0
     while True:
         data = fetch_page(api_key, page)
@@ -60,9 +61,8 @@ def collect_all(api_key):
 
 
 if __name__ == "__main__":
-    # Get a key at https://api.data.gov/signup/ and save it as SCORECARD_API_KEY in .env.
+    # Get a key at https://api.data.gov/signup/; set SCORECARD_API_KEY in .env.
     load_dotenv()
     df = collect_all(os.environ["SCORECARD_API_KEY"])
-    # Save all downloaded records as a raw CSV, replacing the previous file.
     RAW_PATH.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(RAW_PATH, index=False)
